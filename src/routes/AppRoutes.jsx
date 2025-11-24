@@ -1,0 +1,20 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import DetalhesEmpreendimento from "../pages/DetalhesEmpreendimento";
+import CadastrarEmpreendimento from "../pages/CadastrarEmpreendimento";
+import MeusEmpreendimentos from "../pages/MeusEmpreendimentos";
+
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/meus-empreendimentos" />} />
+
+        <Route path="/meus-empreendimentos" element={<MeusEmpreendimentos />} />
+        <Route path="/detalhes-empreendimento" element={<DetalhesEmpreendimento />}/>
+        <Route path="/cadastrar-empreendimento" element={<CadastrarEmpreendimento />}/>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+
