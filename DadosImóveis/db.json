@@ -1,0 +1,32 @@
+{
+  "imoveis": [
+    {
+      "id": "28ce",
+      "nome": "ALISON JOSE MARQUES",
+      "tipo": "Comercial",
+      "rua": "Rua João Fragoso de Medeiros",
+      "numero": "1623",
+      "bairro": "Candeias",
+      "cidade": "Jaboatão dos Guararapes",
+      "estado": "PE",
+      "cep": "54430-250",
+      "descricao": "oi",
+      "areasComuns": [
+        "Playground",
+        "Lavanderia"
+      ],
+      "totalUnidades": "1",
+      "dataEntrega": "2025-12-01",
+      "statusProjeto": "Em obras",
+      "padraoUnico": true,
+      "unidadesVariadas": false,
+      "metragem": "2",
+      "quartos": "1",
+      "suites": "2",
+      "banheiros": "1",
+      "vagasGaragem": "1"
+    }
+  ],
+  "corretores": [],
+  "contatos": []
+}
