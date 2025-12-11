@@ -6,9 +6,10 @@ import UploadBox from "../components/UploadBox";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Section from "../components/Section";
 import Grid from "../components/Grid";
+import api from "../services/api";
 
 export default function CadastrarEmpreendimento() {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     nome: "",
     tipo: "",
     rua: "",
@@ -31,53 +32,39 @@ export default function CadastrarEmpreendimento() {
     vagasGaragem: ""
   });
 
-  const handleCheckbox = (label, field = "areasComuns") => {
-    const newValues = formData[field].includes(label)
-      ? formData[field].filter((a) => a !== label)
-      : [...formData[field], label];
-    setFormData({ ...formData, [field]: newValues });
-  };
+  function handleChange(e) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  }
 
-  const handleSubmit = async () => {
+  function handleCheckbox(e) {
+    const { name, checked } = e.target;
+    setForm({ ...form, [name]: checked });
+  }
+
+  function toggleArea(area) {
+    setForm((prev) => {
+      const jaTem = prev.areasComuns.includes(area);
+      return {
+        ...prev,
+        areasComuns: jaTem
+          ? prev.areasComuns.filter((a) => a !== area)
+          : [...prev.areasComuns, area],
+      };
+    });
+  }
+
+  async function salvarEmpreendimento() {
     try {
-      const response = await fetch("http://localhost:3001/imoveis", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-      if (response.ok) {
-        alert("Empreendimento salvo com sucesso!");
-        // Resetar formulário
-        setFormData({
-          nome: "",
-          tipo: "",
-          rua: "",
-          numero: "",
-          bairro: "",
-          cidade: "",
-          estado: "",
-          cep: "",
-          descricao: "",
-          areasComuns: [],
-          totalUnidades: "",
-          dataEntrega: "",
-          statusProjeto: "",
-          padraoUnico: false,
-          unidadesVariadas: false,
-          metragem: "",
-          quartos: "",
-          suites: "",
-          banheiros: "",
-          vagasGaragem: ""
-        });
-      } else {
-        alert("Erro ao salvar empreendimento.");
-      }
+      await api.post("/imoveis", form);
+      alert("Empreendimento salvo com sucesso!");
     } catch (error) {
-      console.error(error);
       alert("Erro ao salvar empreendimento.");
+      console.error(error);
     }
-  };
+  }
 
   return (
     <DashboardLayout>
@@ -86,7 +73,7 @@ export default function CadastrarEmpreendimento() {
           Cadastrar Novo Empreendimento
         </h1>
         <p className="text-gray-600 mt-1">
-          Preencha as informações do empreendimento que serão reutilizadas no cadastro das unidades.
+          Preencha as informações do empreendimento.
         </p>
 
         {/* Identificação */}
@@ -94,15 +81,17 @@ export default function CadastrarEmpreendimento() {
           <Grid cols={2}>
             <Input
               label="Nome do Empreendimento"
-              placeholder="Ex: Beach World Residence"
-              value={formData.nome}
-              onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
             />
+
             <Select
               label="Tipo de Empreendimento"
+              name="tipo"
+              value={form.tipo}
+              onChange={handleChange}
               options={["Residencial", "Comercial", "Misto"]}
-              value={formData.tipo}
-              onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
             />
           </Grid>
         </Section>
@@ -110,163 +99,107 @@ export default function CadastrarEmpreendimento() {
         {/* Endereço */}
         <Section title="Endereço">
           <Grid cols={2}>
-            <Input
-              label="Rua"
-              value={formData.rua}
-              onChange={(e) => setFormData({ ...formData, rua: e.target.value })}
-            />
-            <Input
-              label="Número"
-              value={formData.numero}
-              onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
-            />
+            <Input label="Rua" name="rua" value={form.rua} onChange={handleChange} />
+            <Input label="Número" name="numero" value={form.numero} onChange={handleChange} />
           </Grid>
+
           <Grid cols={2}>
-            <Input
-              label="Bairro"
-              value={formData.bairro}
-              onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
-            />
-            <Input
-              label="Cidade"
-              value={formData.cidade}
-              onChange={(e) => setFormData({ ...formData, cidade: e.target.value })}
-            />
+            <Input label="Bairro" name="bairro" value={form.bairro} onChange={handleChange} />
+            <Input label="Cidade" name="cidade" value={form.cidade} onChange={handleChange} />
           </Grid>
+
           <Grid cols={2}>
-            <Input
-              label="Estado"
-              value={formData.estado}
-              onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-            />
-            <Input
-              label="CEP"
-              value={formData.cep}
-              onChange={(e) => setFormData({ ...formData, cep: e.target.value })}
-            />
+            <Input label="Estado" name="estado" value={form.estado} onChange={handleChange} />
+            <Input label="CEP" name="cep" value={form.cep} onChange={handleChange} />
           </Grid>
         </Section>
 
-        {/* Informações do Projeto */}
+        {/* Descrição */}
         <Section title="Informações do Projeto">
           <textarea
+            name="descricao"
+            value={form.descricao}
+            onChange={handleChange}
             className="border border-gray-300 rounded-lg w-full p-3 h-24 mt-3"
             placeholder="Breve descrição institucional"
-            value={formData.descricao}
-            onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-          ></textarea>
+          />
         </Section>
 
         {/* Áreas Comuns */}
         <Section title="Áreas Comuns">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-            {["Não se aplica","Piscina","Academia","Playground","Coworking","Lavanderia"].map((label) => (
+            {["Piscina", "Academia", "Playground", "Coworking", "Lavanderia"].map((area) => (
               <Checkbox
-                key={label}
-                label={label}
-                checked={formData.areasComuns.includes(label)}
-                onChange={() => handleCheckbox(label)}
+                key={area}
+                label={area}
+                checked={form.areasComuns.includes(area)}
+                onChange={() => toggleArea(area)}
               />
             ))}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+
+          <Grid cols={3}>
             <Input
               label="Número Total de Unidades"
-              value={formData.totalUnidades}
-              onChange={(e) => setFormData({ ...formData, totalUnidades: e.target.value })}
+              name="totalUnidades"
+              value={form.totalUnidades}
+              onChange={handleChange}
             />
+
             <Input
               label="Data Estimada de Entrega"
               type="date"
-              value={formData.dataEntrega}
-              onChange={(e) => setFormData({ ...formData, dataEntrega: e.target.value })}
+              name="dataEntrega"
+              value={form.dataEntrega}
+              onChange={handleChange}
             />
+
             <Select
               label="Status do Projeto"
-              options={["Lançamento","Em obras","Concluído"]}
-              value={formData.statusProjeto}
-              onChange={(e) => setFormData({ ...formData, statusProjeto: e.target.value })}
+              name="statusProjeto"
+              value={form.statusProjeto}
+              onChange={handleChange}
+              options={["Lançamento", "Em obras", "Concluído"]}
             />
-          </div>
+          </Grid>
         </Section>
 
-        {/* Detalhamento das Unidades */}
+        {/* Unidades */}
         <Section title="Detalhamento das Unidades">
-          <div className="flex flex-col sm:flex-row gap-6 mb-4">
+          <div className="flex gap-6 mb-4">
             <Checkbox
               label="Padrão único"
-              checked={formData.padraoUnico}
-              onChange={() => setFormData({ ...formData, padraoUnico: !formData.padraoUnico })}
+              name="padraoUnico"
+              checked={form.padraoUnico}
+              onChange={handleCheckbox}
             />
+
             <Checkbox
               label="Unidades variadas"
-              checked={formData.unidadesVariadas}
-              onChange={() => setFormData({ ...formData, unidadesVariadas: !formData.unidadesVariadas })}
+              name="unidadesVariadas"
+              checked={form.unidadesVariadas}
+              onChange={handleCheckbox}
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Input
-              label="Metragem"
-              value={formData.metragem}
-              onChange={(e) => setFormData({ ...formData, metragem: e.target.value })}
-            />
-            <Input
-              label="Nº de Quartos"
-              value={formData.quartos}
-              onChange={(e) => setFormData({ ...formData, quartos: e.target.value })}
-            />
-            <Input
-              label="Nº de Suítes"
-              value={formData.suites}
-              onChange={(e) => setFormData({ ...formData, suites: e.target.value })}
-            />
-            <Input
-              label="Nº de Banheiros"
-              value={formData.banheiros}
-              onChange={(e) => setFormData({ ...formData, banheiros: e.target.value })}
-            />
-            <Input
-              label="Nº de Vagas de Garagem"
-              value={formData.vagasGaragem}
-              onChange={(e) => setFormData({ ...formData, vagasGaragem: e.target.value })}
-            />
-          </div>
+
+          <Grid cols={3}>
+            <Input label="Metragem" name="metragem" value={form.metragem} onChange={handleChange} />
+            <Input label="Nº de Quartos" name="quartos" value={form.quartos} onChange={handleChange} />
+            <Input label="Nº de Suítes" name="suites" value={form.suites} onChange={handleChange} />
+            <Input label="Nº de Banheiros" name="banheiros" value={form.banheiros} onChange={handleChange} />
+            <Input label="Nº de Vagas de Garagem" name="vagasGaragem" value={form.vagasGaragem} onChange={handleChange} />
+          </Grid>
         </Section>
 
         {/* Botões */}
-        <div className="flex flex-col sm:flex-row justify-end gap-4 mt-10">
-          <button
-            className="px-6 py-3 bg-gray-300 rounded-lg hover:bg-gray-400"
-            onClick={() =>
-              setFormData({
-                nome: "",
-                tipo: "",
-                rua: "",
-                numero: "",
-                bairro: "",
-                cidade: "",
-                estado: "",
-                cep: "",
-                descricao: "",
-                areasComuns: [],
-                totalUnidades: "",
-                dataEntrega: "",
-                statusProjeto: "",
-                padraoUnico: false,
-                unidadesVariadas: false,
-                metragem: "",
-                quartos: "",
-                suites: "",
-                banheiros: "",
-                vagasGaragem: ""
-              })
-            }
-          >
+        <div className="flex justify-end gap-4 mt-10">
+          <button className="px-6 py-3 bg-gray-300 rounded-lg hover:bg-gray-400">
             Cancelar
           </button>
+
           <button
+            onClick={salvarEmpreendimento}
             className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
-            onClick={handleSubmit}
           >
             Salvar Empreendimento
           </button>

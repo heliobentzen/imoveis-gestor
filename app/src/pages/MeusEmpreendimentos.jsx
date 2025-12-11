@@ -1,60 +1,32 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Input from "../components/Input";
 import Select from "../components/Select";
-import { Link } from "react-router-dom";
+import api from "../services/api";
 
 export default function MeusEmpreendimentos() {
-  const lista = [
-    {
-      id: 1,
-      nome: "Beach World Residences",
-      local: "Armação, Penha - SC",
-      entrega: "Novembro 2026",
-      unidades: 12,
-      imagem: "https://via.placeholder.com/600x400",
-      status: "Lançamento",
-    },
-    {
-      id: 2,
-      nome: "Costal Bliss",
-      local: "Armação, Penha - SC",
-      entrega: "Novembro 2026",
-      unidades: 12,
-      imagem: "https://via.placeholder.com/600x400",
-      status: "Lançamento",
-    },
-    {
-      id: 3,
-      nome: "Residencial Atlantis",
-      local: "Armação, Penha - SC",
-      entrega: "Novembro 2026",
-      unidades: 12,
-      imagem: "https://via.placeholder.com/600x400",
-      status: "Lançamento",
-    },
-    {
-      id: 4,
-      nome: "Residencial Stella Maris",
-      local: "Armação, Penha - SC",
-      entrega: "Novembro 2026",
-      unidades: 12,
-      imagem: "https://via.placeholder.com/600x400",
-      status: "Lançamento",
-    },
-    {
-      id: 5,
-      nome: "Residencial El Dorado",
-      local: "Armação, Penha - SC",
-      entrega: "Novembro 2026",
-      unidades: 12,
-      imagem: "https://via.placeholder.com/600x400",
-      status: "Lançamento",
-    },
-  ];
+  const [empreendimentos, setEmpreendimentos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 Carregar dados reais do db.json
+  useEffect(() => {
+    async function carregar() {
+      try {
+        const response = await api.get("/imoveis");
+        setEmpreendimentos(response.data);
+      } catch (error) {
+        console.error("Erro ao carregar empreendimentos:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    carregar();
+  }, []);
 
   return (
     <DashboardLayout>
-
       {/* CABEÇALHO RESPONSIVO */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
@@ -75,8 +47,6 @@ export default function MeusEmpreendimentos() {
       {/* FILTROS */}
       <div className="bg-white rounded-xl p-6 shadow mt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-
-          {/* Buscar Empreendimento */}
           <div className="flex flex-col md:col-span-2">
             <label className="text-sm font-semibold text-gray-700 mb-1">
               Buscar empreendimento
@@ -84,7 +54,6 @@ export default function MeusEmpreendimentos() {
             <Input placeholder="Nome do empreendimento ou cidade..." />
           </div>
 
-          {/* Status */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-gray-700 mb-1">
               Status
@@ -94,7 +63,6 @@ export default function MeusEmpreendimentos() {
             />
           </div>
 
-          {/* Tipo */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-gray-700 mb-1">
               Tipo
@@ -103,48 +71,65 @@ export default function MeusEmpreendimentos() {
               options={["Todos os tipos", "Residencial", "Comercial", "Misto"]}
             />
           </div>
-
         </div>
       </div>
 
-      {/* LISTA */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {lista.map((item) => (
-          <div key={item.id} className="bg-white rounded-xl shadow p-3">
-            <img
-              src={item.imagem}
-              alt={item.nome}
-              className="w-full h-40 object-cover rounded-lg"
-            />
+      {/* ---- LISTA REAL ---- */}
+      {loading ? (
+        <p className="text-center mt-10 text-gray-600">Carregando...</p>
+      ) : empreendimentos.length === 0 ? (
+        <p className="text-center mt-10 text-gray-600">
+          Nenhum empreendimento cadastrado.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {empreendimentos.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl shadow p-3">
+              <img
+                src="https://via.placeholder.com/600x400"
+                alt={item.nome}
+                className="w-full h-40 object-cover rounded-lg"
+              />
 
-            <div className="mt-3">
-              <h2 className="text-xl font-semibold">{item.nome}</h2>
+              <div className="mt-3">
+                <h2 className="text-xl font-semibold">{item.nome}</h2>
 
-              <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 text-xs rounded">
-                {item.status}
-              </span>
+                <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 text-xs rounded">
+                  {item.statusProjeto || "Sem status"}
+                </span>
 
-              <p className="text-gray-600 mt-1">{item.local}</p>
-              <p className="text-gray-600 text-sm">Entrega: {item.entrega}</p>
-              <p className="text-gray-600 text-sm">{item.unidades} unidades</p>
+                <p className="text-gray-600 mt-1">
+                  {item.bairro} — {item.cidade} / {item.estado}
+                </p>
 
-              <div className="flex gap-3 mt-3">
-                <Link
-                  to="/detalhes-empreendimento"
-                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm"
-                >
-                  Ver Detalhes
-                </Link>
+                <p className="text-gray-600 text-sm">
+                  Entrega: {item.dataEntrega || "Não informado"}
+                </p>
 
-                <button className="border px-3 py-2 rounded-lg text-sm hover:bg-gray-100">
-                  Editar
-                </button>
+                <p className="text-gray-600 text-sm">
+                  {item.totalUnidades} unidades
+                </p>
+
+                <div className="flex gap-3 mt-3">
+                  <Link
+                    to={`/detalhes-empreendimento/${item.id}`}
+                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm"
+                  >
+                    Ver Detalhes
+                  </Link>
+
+                  <Link
+                     to={`/editar-empreendimento/${item.id}`}
+                     className="border px-3 py-2 rounded-lg text-sm hover:bg-gray-100"
+                  >
+                    Editar
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
+          ))}
+        </div>
+      )}
     </DashboardLayout>
   );
 }

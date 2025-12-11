@@ -1,10 +1,20 @@
-export default function Input({ label, type = "text", value, onChange, placeholder }) {
+export default function Input({
+  label,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  name,
+}) {
   return (
     <div className="flex flex-col gap-1">
-      {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
+      {label && (
+        <label className="text-sm font-medium text-gray-700">{label}</label>
+      )}
 
       <input
         type={type}
+        name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
