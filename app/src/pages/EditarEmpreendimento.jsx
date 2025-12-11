@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Input from "../components/Input";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Checkbox from "../components/Checkbox";
+import Grid from "../components/Grid";
+import Input from "../components/Input";
+import Section from "../components/Section";
 import Select from "../components/Select";
 import DashboardLayout from "../layouts/DashboardLayout";
-import Section from "../components/Section";
-import Grid from "../components/Grid";
-import api from "../services/api";
 
 export default function EditarEmpreendimento() {
   const { id } = useParams();
@@ -18,8 +17,9 @@ export default function EditarEmpreendimento() {
   useEffect(() => {
     async function carregar() {
       try {
-        const response = await api.get(`/imoveis/${id}`);
-        setForm(response.data);
+        const response = await fetch(`http://localhost:4000/imoveis/${id}`);
+        const data = await response.json();
+        setForm(data);
       } catch (error) {
         console.error("Erro ao carregar empreendimento:", error);
       }
@@ -51,7 +51,13 @@ export default function EditarEmpreendimento() {
 
   async function salvarEdicao() {
     try {
-      await api.put(`/imoveis/${id}`, form);
+      await fetch(`http://localhost:4000/imoveis/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
 
       alert("Empreendimento atualizado com sucesso!");
       navigate("/meus-empreendimentos");

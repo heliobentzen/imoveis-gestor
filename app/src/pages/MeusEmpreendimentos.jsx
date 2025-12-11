@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import DashboardLayout from "../layouts/DashboardLayout";
 import Input from "../components/Input";
 import Select from "../components/Select";
-import api from "../services/api";
+import DashboardLayout from "../layouts/DashboardLayout";
+
 
 export default function MeusEmpreendimentos() {
   const [empreendimentos, setEmpreendimentos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Carregar dados reais do db.json
+  // 🔹 Carregar dados do JSON Server
   useEffect(() => {
     async function carregar() {
       try {
-        const response = await api.get("/imoveis");
-        setEmpreendimentos(response.data);
+        const response = await fetch("http://localhost:4000/imoveis");
+        const data = await response.json();
+        setEmpreendimentos(data);
       } catch (error) {
         console.error("Erro ao carregar empreendimentos:", error);
       } finally {
@@ -119,8 +120,8 @@ export default function MeusEmpreendimentos() {
                   </Link>
 
                   <Link
-                     to={`/editar-empreendimento/${item.id}`}
-                     className="border px-3 py-2 rounded-lg text-sm hover:bg-gray-100"
+                    to={`/editar-empreendimento/${item.id}`}
+                    className="border px-3 py-2 rounded-lg text-sm hover:bg-gray-100"
                   >
                     Editar
                   </Link>
