@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Input from "../components/Input";
 import Checkbox from "../components/Checkbox";
-import Select from "../components/Select";
-import UploadBox from "../components/UploadBox";
-import DashboardLayout from "../layouts/DashboardLayout";
-import Section from "../components/Section";
 import Grid from "../components/Grid";
-import api from "../services/api";
+import Input from "../components/Input";
+import Section from "../components/Section";
+import Select from "../components/Select";
+import DashboardLayout from "../layouts/DashboardLayout";
+
+const API_URL = "http://localhost:4000";
 
 export default function CadastrarEmpreendimento() {
   const [form, setForm] = useState({
@@ -58,7 +58,16 @@ export default function CadastrarEmpreendimento() {
 
   async function salvarEmpreendimento() {
     try {
-      await api.post("/imoveis", form);
+      const response = await fetch(`${API_URL}/imoveis`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) throw new Error("Erro na requisição");
+
       alert("Empreendimento salvo com sucesso!");
     } catch (error) {
       alert("Erro ao salvar empreendimento.");
