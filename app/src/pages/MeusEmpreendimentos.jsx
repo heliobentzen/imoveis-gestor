@@ -25,7 +25,27 @@ export default function MeusEmpreendimentos() {
 
     carregar();
   }, []);
+    async function handleExcluir(id) {
+       const confirmacao = window.confirm(
+       "Tem certeza que deseja excluir este empreendimento?"
+       );
 
+       if (!confirmacao) return;
+
+       try {
+       await fetch(`http://localhost:4000/imoveis/${id}`, {
+        method: "DELETE",
+       });
+
+       // remove da tela sem precisar recarregar
+       setEmpreendimentos((prev) =>
+        prev.filter((item) => item.id !== id)
+        );
+        } catch (error) {
+         console.error("Erro ao excluir empreendimento:", error);
+        alert("Erro ao excluir o empreendimento.");
+        }
+    }
   return (
     <DashboardLayout>
       {/* CABEÇALHO RESPONSIVO */}
@@ -125,6 +145,12 @@ export default function MeusEmpreendimentos() {
                   >
                     Editar
                   </Link>
+                  <button
+                   onClick={() => handleExcluir(item.id)}
+                   className="border border-red-500 text-red-600 px-3 py-2 rounded-lg text-sm hover:bg-red-50"
+  >
+                   Excluir
+                  </button>
                 </div>
               </div>
             </div>
