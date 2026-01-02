@@ -32,10 +32,12 @@ export default function CadastrarEmpreendimento() {
     vagasGaragem: ""
   });
 
+  const [imagens, setImagens] = useState([]);
+
   function handleChange(e) {
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   }
 
@@ -51,29 +53,50 @@ export default function CadastrarEmpreendimento() {
         ...prev,
         areasComuns: jaTem
           ? prev.areasComuns.filter((a) => a !== area)
-          : [...prev.areasComuns, area],
+          : [...prev.areasComuns, area]
       };
     });
   }
 
-  async function salvarEmpreendimento() {
-    try {
-      const response = await fetch(`${API_URL}/imoveis`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!response.ok) throw new Error("Erro na requisição");
-
-      alert("Empreendimento salvo com sucesso!");
-    } catch (error) {
-      alert("Erro ao salvar empreendimento.");
-      console.error(error);
-    }
+  function handleUploadImagens(e) {
+    const files = Array.from(e.target.files);
+    setImagens(files);
   }
+
+  async function salvarEmpreendimento() {
+  try {
+    const formData = new FormData();
+
+    // campos normais
+    Object.entries(form).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, value);
+      }
+    });
+
+    // imagens
+    imagens.forEach((img) => {
+      formData.append("imagens", img);
+    });
+
+    const response = await fetch(`${API_URL}/imoveis`, {
+      method: "POST",
+      body: formData, // ❗ NÃO usar headers aqui
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao salvar");
+    }
+
+    alert("Empreendimento salvo com sucesso!");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao salvar empreendimento");
+  }
+}
+
 
   return (
     <DashboardLayout>
@@ -85,7 +108,6 @@ export default function CadastrarEmpreendimento() {
           Preencha as informações do empreendimento.
         </p>
 
-        {/* Identificação */}
         <Section title="Identificação">
           <Grid cols={2}>
             <Input
@@ -105,7 +127,6 @@ export default function CadastrarEmpreendimento() {
           </Grid>
         </Section>
 
-        {/* Endereço */}
         <Section title="Endereço">
           <Grid cols={2}>
             <Input label="Rua" name="rua" value={form.rua} onChange={handleChange} />
@@ -123,7 +144,6 @@ export default function CadastrarEmpreendimento() {
           </Grid>
         </Section>
 
-        {/* Descrição */}
         <Section title="Informações do Projeto">
           <textarea
             name="descricao"
@@ -134,7 +154,6 @@ export default function CadastrarEmpreendimento() {
           />
         </Section>
 
-        {/* Áreas Comuns */}
         <Section title="Áreas Comuns">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
             {["Piscina", "Academia", "Playground", "Coworking", "Lavanderia"].map((area) => (
@@ -173,7 +192,6 @@ export default function CadastrarEmpreendimento() {
           </Grid>
         </Section>
 
-        {/* Unidades */}
         <Section title="Detalhamento das Unidades">
           <div className="flex gap-6 mb-4">
             <Checkbox
@@ -200,7 +218,16 @@ export default function CadastrarEmpreendimento() {
           </Grid>
         </Section>
 
-        {/* Botões */}
+        <Section title="Imagens do Empreendimento">
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleUploadImagens}
+            className="mt-4"
+          />
+        </Section>
+
         <div className="flex justify-end gap-4 mt-10">
           <button className="px-6 py-3 bg-gray-300 rounded-lg hover:bg-gray-400">
             Cancelar

@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1767391395248,
+    "nome": "",
+    "tipo": "",
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "",
+    "estado": "",
+    "cep": "",
+    "descricao": "",
+    "areasComuns": "[]",
+    "totalUnidades": "",
+    "dataEntrega": "",
+    "statusProjeto": "",
+    "padraoUnico": "false",
+    "unidadesVariadas": "false",
+    "metragem": "",
+    "quartos": "",
+    "suites": "",
+    "banheiros": "",
+    "vagasGaragem": "",
+    "imagens": [
+      "d960546290b6beacc8c27f6c60e3bd72"
+    ]
+  },
+  {
+    "id": 1767391442518,
+    "nome": "Vita",
+    "tipo": "",
+    "rua": "Avenida Antônio Falcão",
+    "numero": "183",
+    "bairro": "Imbiribeira",
+    "cidade": "Recife",
+    "estado": "PE",
+    "cep": "0000",
+    "descricao": "",
+    "areasComuns": "[]",
+    "totalUnidades": "",
+    "dataEntrega": "",
+    "statusProjeto": "",
+    "padraoUnico": "false",
+    "unidadesVariadas": "false",
+    "metragem": "",
+    "quartos": "",
+    "suites": "",
+    "banheiros": "",
+    "vagasGaragem": "",
+    "imagens": [
+      "3a33128d1e4cefa70a2b8c6f3360de05"
+    ]
+  },
+  {
+    "id": 1767391853857,
+    "nome": "Le Parc",
+    "tipo": "Residencial",
+    "rua": "Avenida Antônio Falcão",
+    "numero": "183",
+    "bairro": "Imbiribeira",
+    "cidade": "Recife",
+    "estado": "PE",
+    "cep": "0000",
+    "descricao": "",
+    "areasComuns": "[\"Piscina\",\"Coworking\",\"Academia\",\"Lavanderia\",\"Playground\"]",
+    "totalUnidades": "",
+    "dataEntrega": "",
+    "statusProjeto": "",
+    "padraoUnico": "false",
+    "unidadesVariadas": "true",
+    "metragem": "",
+    "quartos": "",
+    "suites": "",
+    "banheiros": "",
+    "vagasGaragem": "",
+    "imagens": [
+      "031ddbc53986ae5946dafe61fb0b999b"
+    ]
+  }
+]
